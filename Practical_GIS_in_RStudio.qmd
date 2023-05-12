@@ -1,0 +1,282 @@
+---
+title: "RStudio for Practical Geospatial Analysis"
+author: "Roger Andre, Solutions Engineer, Posit PBC"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/rstudio_logo.png
+    css: styles.css
+---
+
+## Practical Geospatial Analysis...
+
+'Practical' as in, _"We need to know..."_
+
+::: incremental
+- _How many people live in a service area?_
+- _How far apart are 2 businesses from one another?_
+- _What are the geographic coordinates for an address?_
+- _How many businesses are within N miles of an address?_
+:::
+
+. . .
+
+<br/>_"...by tomorrow!"_
+
+## R widely used in Data Science but...
+
+_...using R/RStudio for spatial analysis still isn't very common._
+
+::: incremental
+- Spatial Data Analysis (GIS) in R is still considered "niche" by some people
+- Older spatial packages (like `sp`) implemented very R-centric workflows
+- There are PLENTY of other, good GIS tools available
+:::
+
+. . .
+
+<br/>_My goal here is to convince you to try it!_
+
+## 	What is R?
+
+> _"R is a free software environment for statistical computing and graphics."_
+
+* An interpreted language that is similar in some ways to Python
+* Multipurpose, but highly optimized for working with structured data 
+* Pandas library in Python is based on core functionality in R
+
+## 	What is RStudio?
+
+* Open Source IDE with tools for working in R (and Python)
+* Available in free (as in speech) and commercial editions
+* Desktop app. on many OS and server application on Linux
+
+`RStudio` was also formerly the name of the company that funds work on the IDE (and other OS projects).
+
+## Why should you use R/RStudio for Geospatial Data Analysis?
+
+::: {.fragment}
+#### _Because you're probably already using RStudio for ~~Geospatial~~ Data Analysis!_
+:::
+
+::: {.fragment}
+![](./images/data_science_venn.png){.absolute left=0}
+:::
+
+::: {.fragment}
+![](./images/location_data_science_venn.png){.absolute left=0}
+:::
+
+## And since you're already using RStudio...
+
+. . .
+
+</br>
+
+#### _RStudio has built-in features that are well suited to GIS!_
+
+## Native graphic support for vector "maps"
+
+Charts, plots, images...
+
+![](./images/rstudio_plot_pane.png)
+
+## ...and raster plots
+
+Gridded Population 
+
+![](./images/rstudio_raster_plot.png)
+
+## ...and other things
+
+(my slides under development)
+
+![](./images/slides_plot_pane.png)
+
+## Built-in Help doc viewer
+
+`?raster` 
+
+![](./images/rstudio_docs.png)
+
+## R itself has good geospatial support
+
+- `raster` (which is now superseded by `terra`)
+
+> The raster package provides classes and functions to manipulate geographic (spatial) data in ’raster’
+format.
+
+- `sf`
+
+> Support for simple features, a standardized way to
+encode spatial vector data. Binds to 'GDAL' for reading and writing
+data, to 'GEOS' for geometrical operations, and to 'PROJ' for
+projection conversions and datum transformations.
+
+## Basic shapefile operations
+
+- Open and read a shapefile
+
+``` {.r code-line-numbers="1-2|4-10"}
+library(sf)
+states <- st_read("Data/cb_2018_us_state_20m.shp")
+
+Reading layer `cb_2018_us_state_20m' from data source 
+  `/home/rstudio/CUGOS_2023_Spring_Fling/Data/cb_2018_us_state_20m.shp' using driver `ESRI Shapefile'
+Simple feature collection with 52 features and 9 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -179.1743 ymin: 17.91377 xmax: 179.7739 ymax: 71.35256
+Geodetic CRS:  4269
+```
+
+## Basic shapefile operations (cont.)
+
+- Reproject to new CRS
+
+``` {.r code-line-numbers="1-2|4-8"}
+states <- st_transform(states, crs = 4326)
+states
+
+Simple feature collection with 52 features and 9 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -179.1743 ymin: 17.91377 xmax: 179.7739 ymax: 71.35256
+Geodetic CRS:  EPSG:4326
+```
+
+## Basic shapefile operations (cont.)
+
+- Buffer around a set of points
+``` {.r code-line-numbers="1-7|9-10|12-17"}
+wa_town_albers
+
+Simple feature collection with 124 features and 9 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: -2134539 ymin: 2773350 xmax: -1566342 ymax: 3155027
+Projected CRS: EPSG:5070
+
+# 30 miles approx 48,300 meters
+wa_town_albers_buffer <- st_buffer(wa_town_albers, 48300)
+
+wa_town_albers_buffer
+Simple feature collection with 124 features and 9 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: -2182839 ymin: 2725050 xmax: -1518042 ymax: 3203327
+Projected CRS: EPSG:5070
+```
+
+## Basic raster operations
+
+- Open a geotiff and display its extents
+
+``` {.r code-line-numbers="1-3|4-11"}
+library(raster)
+world_pop <- raster("Data/gpw_v4_population_count_rev11_2020_30_sec.tif")
+world_pop
+
+class      : RasterLayer 
+dimensions : 21600, 43200, 933120000  (nrow, ncol, ncell)
+resolution : 0.008333333, 0.008333333  (x, y)
+extent     : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+crs        : +proj=longlat +datum=WGS84 +no_defs 
+source     : gpw_v4_population_count_rev11_2020_30_sec.tif 
+names      : gpw_v4_population_count_rev11_2020_30_sec
+```
+
+## Basic raster operations (cont.)
+
+- Create a VRT from larger raster using bbox as extents
+
+``` {.r code-line-numbers="1-4"}
+library(gdalUtilities)
+gdalbuildvrt(gdalfile = "Data/gpw_v4_population_count_rev11_2020_30_sec.tif", 
+              output.vrt = "Data/wa_gridded_pop.vrt", 
+              te = wa_bbox)
+```
+
+- Load the VRT as a raster
+``` {.r code-line-numbers="1-11"}
+wa_pop <- raster("Data/wa_gridded_pop.vrt")
+
+setMinMax(wa_pop)
+class      : RasterLayer 
+dimensions : 535, 1177, 629695  (nrow, ncol, ncell)
+resolution : 0.008333333, 0.008333333  (x, y)
+extent     : -125.7258, -115.9175, 44.54416, 49.00249  (xmin, xmax, ymin, ymax)
+crs        : +proj=longlat +datum=WGS84 +no_defs 
+source     : wa_gridded_pop.vrt 
+names      : wa_gridded_pop 
+values     : 0, 7647.292  (min, max)
+```
+
+## Dissolve operation
+
+``` r
+# Add 'type' field to dissolve on
+hosp_buffer$type <- "combined_service_areas"
+
+hosp_service_area <- hosp_buffer %>%
+  group_by(type) %>% 
+  summarise()
+```
+
+::: {layout-ncol="2"}
+![](images/hosp_service_areas.png)
+
+![](images/dissolve_hosp_service_areas.png)
+:::
+
+## A practical example
+
+> Assume that you work for an agency that is reponsible for helping to expand access to healthcare in rural America.  You have been tasked to come up with a list of 3 rural cities, or towns, in the State of Washington that would most benefit from the construction of a new hospital.
+
+Provide the names for the top 3 cities or towns and the estimated population that would be covered by a 30 mile service area around each of them.
+
+
+## Combining rasters and vectors
+
+Where this gets fun!
+
+``` r
+st_as_sf(raster::extract(wa_pop, 
+  candidate_towns, 
+  fun=sum, 
+  na.rm=TRUE, 
+  sp=TRUE)) -> candidate_town_pops
+  
+st_drop_geometry(candidate_town_pops) %>% 
+  select(NAME, wa_gridded_pop) %>% 
+  arrange(desc(wa_gridded_pop)) %>%
+  slice(1:3)
+
+      NAME wa_gridded_pop
+1   Colton      144817.03
+2   Asotin      133227.72
+3 Okanogan       36177.21
+```
+
+
+## Final results - Top 3 candidates
+
+![](images/candidate_towns.png){.absolute left=0}
+
+::: {.fragment}
+![](images/top_3_towns.png){.absolute left=0}
+:::
+
+## Additional inspiration
+
+- Shiny apps that showcase interactivity with maps
+
+[https://fitzlab.shinyapps.io/cityapp/](https://fitzlab.shinyapps.io/cityapp/)
+
+[https://alexh5.shinyapps.io/INFO201FinalProject/](https://alexh5.shinyapps.io/INFO201FinalProject/)
+
+[https://vac-lshtm.shinyapps.io/ncov_tracker/](https://vac-lshtm.shinyapps.io/ncov_tracker/)
+
