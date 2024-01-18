@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "locale": "en_US",
+  "platform": "4.2.3",
+  "metadata": {
+    "appmode": "quarto-static",
+    "primary_rmd": "Practical_GIS_in_RStudio.qmd",
+    "primary_html": null,
+    "content_category": null,
+    "has_parameters": false
+  },
+  "quarto": {
+    "version": "1.3.340",
+    "engines": ["markdown"]
+  },
+  "packages": null,
+  "files": {
+    "Data_Analysis_Notes.R": {
+      "checksum": "2e049fa9a469992c2158357b9d429a26"
+    },
+    "hosp_new_towns.pdf": {
+      "checksum": "2ed23ee47491c5b38d5bddd7f729846e"
+    },
+    "images/candidate_towns.png": {
+      "checksum": "bd136eb016e1b66205c80b2cfb967a3b"
+    },
+    "images/data_science_venn.png": {
+      "checksum": "744e718387acff49ccaa7ebdee6b5349"
+    },
+    "images/dissolve_hosp_service_areas.png": {
+      "checksum": "b648072b7cdb9c09767fb2630ee9b5ce"
+    },
+    "images/hosp_service_areas.png": {
+      "checksum": "6ef97689a3b8761c3c448ce5f4aa7ce1"
+    },
+    "images/location_data_science_venn.png": {
+      "checksum": "6df2b0a366cc46189b2998f86fc166ba"
+    },
+    "images/rstudio_docs.png": {
+      "checksum": "dc1912455c593ed326679ad71d3ee1c5"
+    },
+    "images/rstudio_logo.png": {
+      "checksum": "52377f63684152eec37fe4b40dceed22"
+    },
+    "images/rstudio_plot_pane.png": {
+      "checksum": "4bac2a3a60de10a8c0bca17746417a43"
+    },
+    "images/rstudio_raster_plot.png": {
+      "checksum": "e54a13c9fae85d3e567f4437ebbb162e"
+    },
+    "images/slides_plot_pane.png": {
+      "checksum": "9775efaea1257cd5c1b519eb542c8308"
+    },
+    "images/top_3_towns.png": {
+      "checksum": "289fe4da719e5a23bb7a748a68f4e392"
+    },
+    "Practical_GIS_in_RStudio.html": {
+      "checksum": "0695af229b5d7d3c9edc5bced4020bde"
+    },
+    "Practical_GIS_in_RStudio.qmd": {
+      "checksum": "a7378451bd5e3e3982fbef18fe8fe162"
+    },
+    "R/publish_to_posit2.R": {
+      "checksum": "999260d7ebab8a433f4a132618c35fce"
+    }
+  },
+  "users": null
+}
